@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul class="list-group">
+  {% for item in movie_list %}
+  <li class="list-group-item">
+      <span class="text-info">Tytuł </span> <span>{{ item.movie.movie_name }}</span>
+      <br>
+      <span class="text-info">Reżyser: </span><span>{{ item.movie.director }}</span>
+      <br>
+      <span class="text-info">Data produkcji: </span><span>{{ item.movie.publication_dates }}</span>
+      <br>
+      <span class="text-info">Ocena: </span><span class="badge badge-primary badge-pill">{{ item.movie_rating }}</span>
+      <br>
+      <span class="text-info">Liczba recenzji: </span><span>{{ item.number_of_reviews }}</span>
+      <br>
+      {% if item.movie_rating is null %}
+      <span class="text-secondary">Napisz pierwszą recenzję.</span>
+      <br>
+      {% endif %}
+      <a class="btn btn-primary btn-sm active" role="button" aria-pressed="true" href="/movies/{{ item.movie.id }}">Recenzje</a></li>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock %}

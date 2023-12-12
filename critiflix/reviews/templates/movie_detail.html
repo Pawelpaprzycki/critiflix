@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+        <br>
+        <h3>Szczegółowe informacje o filmie</h3>
+        <hr>
+        <span class="text-info">Tytuł </span> <span>{{ movie.movie_name }}</span>
+        <br>
+        <span class="text-info">Reżyser: </span><span>{{ movie.director }}</span>
+        <br>
+        <span class="text-info">Data produkcji: </span><span>{{ movie.publication_dates }}</span>
+        <br>
+        {% if not reviews %}
+            <hr>
+            <h3>Napisz pierwszą recenzję.</h3>
+
+        {% else %}
+                <span class="text-info">Ocena ogólna: </span><span class="badge badge-primary badge-pill">{{ movie_rating }}</span>
+                <br>
+                <hr>
+                <h3>Recenzje</h3>
+                <ul>
+                {% for review in reviews %}
+                    <li class="list-group-item">
+                            <span class="text-info">Recenzja: </span> <span>{{ review.content }}</span>
+                            <br>
+                            <span class="text-info">Data utworzenia: </span><span>{{ review.date_created }}</span>
+                            <br>
+                            <span class="text-info">Data edycji: </span><span>{{ review.date_edited }}</span>
+                            <br>
+                            <span class="text-info">Ocena: </span><span class="badge badge-secondary badge-pill">{{ review.rating }}</span>
+                            <br>
+                            <span class="text-info">Twórca: </span><span>{{ review.creator.username }}</span>
+                            <br>
+                    </li>
+                {% endfor %}
+                </ul>
+        {% endif %}
+{% endblock %}

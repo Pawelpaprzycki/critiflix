@@ -1,7 +1,7 @@
 
 
 <p align="center">
-  <img src="https://github.com/Pawelpaprzycki/critiflix/blob/main/LOGO.png" />
+  <img src="https://github.com/Pawelpaprzycki/critiflix/blob/git-setup/LOGO.png" />
 </p>
 
 

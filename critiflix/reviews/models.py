@@ -20,12 +20,16 @@ class Movie(models.Model):
     website = models.URLField(default="http://www.netflix.com/pl/")
 
     def __str__(self):
-        return self.movie_name
+        return f"{self.movie_name} - {self.director}"
 
-class MovieCasts(models.Model):
+
+class MovieCast(models.Model):
     actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     role = models.CharField(max_length=100, help_text="Name of the role")
+
+    def __str__(self):
+        return f"{self.actor} as {self.role} in {self.movie}"
 
 class Review(models.Model):
     content = models.TextField(help_text="Review of the movie/series.")
@@ -34,3 +38,7 @@ class Review(models.Model):
     date_edited = models.DateTimeField(null=True, help_text="Date and time of the last review edit.")
     creator = models.ForeignKey(auth.get_user_model(), on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews', help_text="Reviewed Movie/series.")
+
+    def __str__(self):
+        return self.creator.username
+

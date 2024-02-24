@@ -3,8 +3,14 @@ from reviews.models import Movie, MovieCast, Review, Actor
 
     
 class MovieAdmin(admin.ModelAdmin):
-    list_display=('movie_name', 'director')
+    list_display=('movie_name', 'director', 'publication_dates')
     list_filter = ('director',)
+    date_hierarchy = 'publication_dates'
+    search_fields = ('movie_name', 'director', )
+   
+
+
+
 
 class ActorAdmin(admin.ModelAdmin):
     list_display=('first_names', 'last_names')
@@ -23,8 +29,10 @@ class MovieCastAdmin(admin.ModelAdmin):
         return obj.actor.last_names
     
 class ReviewAdmin(admin.ModelAdmin):
-    list_display=('movie','rating','creator','content',)
+    list_display=('creator','rating','content','movie')
     list_filter = ('movie',)
+    
+    fieldsets = ((None,{'fields':('creator','movie')}),('Zawartość recenzji',{'fields':('content', 'rating')}))
 
 admin.site.register(MovieCast, MovieCastAdmin)
 admin.site.register(Review, ReviewAdmin)

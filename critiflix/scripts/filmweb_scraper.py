@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 output_file_path = os.path.join('sourced_data', 'movie_db.json')
 
 url_base = 'https://www.filmweb.pl/ranking/vod/netflix/film/'
-start_year = 2023
-end_year = 2023
+start_year = 1970
+end_year = 2024
 
 data = {"movies": [], "actors": [], "casts": [], "reviews": []}
 movie_id_counter = 1
@@ -18,6 +18,30 @@ def get_actor_id(actor_name):
         if actor["first_names"] + " " + actor["last_names"] == actor_name:
             return actor["id"]
     return None
+
+def parse_publication_date(publication_date_str, year):
+    if publication_date_str.strip():  # Check if the publication date string is not empty
+        parts = publication_date_str.split()  # Split the string by spaces
+        
+        if parts[0].isdigit() and (len(parts[0]) == 2 or len(parts[0]) == 1):  # Check if it contains day, month, and year
+            day = int(parts[0])
+            month_str = parts[1].lower()
+            months = {
+                'stycznia': 1, 'lutego': 2, 'marca': 3, 'kwietnia': 4, 'maja': 5, 'czerwca': 6,
+                'lipca': 7, 'sierpnia': 8, 'września': 9, 'października': 10, 'listopada': 11, 'grudnia': 12
+            }
+            month = months.get(month_str)
+            if month is None:
+                return f"01.01.{year}"
+            return f"{day:02d}.{month:02d}.{year}"
+        else:
+            day = 1
+            month = 1
+            
+            return f"01.01.{year}"
+    else:
+        return f"01.01.{year}"
+
 
 for year in range(start_year, end_year + 1):
     url_movies = f'{url_base}{year}'
@@ -42,7 +66,13 @@ for year in range(start_year, end_year + 1):
             director = movie_soup2.find('h1', class_='filmCoverSection__title').get_text()
 
         film_genre = movie_soup2.find('div', class_='filmInfo__info', itemprop='genre').get_text()
-        publication_date = movie_soup2.find('span', itemprop='datePublished').get_text()
+        publication_date_span = movie_soup2.find('span', itemprop='datePublished')
+        if publication_date_span:
+            publication_date = publication_date_span.get_text()
+            # Parse publication date
+            publication_date = parse_publication_date(publication_date, year)
+        else:
+            publication_date = f"01.01.{year}"  # Default date if publication date not found
 
         # Sprawdzenie, czy istnieje element z czasem trwania przed próbą pobrania tekstu
         time_required_elem = movie_soup2.find('div', itemprop='timeRequired')
@@ -123,4 +153,3 @@ for year in range(start_year, end_year + 1):
 # Save data to the output file
 with open(output_file_path, "w") as f:
     json.dump(data, f, indent=2)
-

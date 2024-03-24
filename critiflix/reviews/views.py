@@ -2,6 +2,16 @@ from django.shortcuts import render, get_object_or_404
 from .models import Movie, Review
 from .utils import average_rating
 
+
+
+def index(request):
+    return render(request, "base.html")
+
+
+def movie_search(request):
+    search_text = request.GET.get("search", "")
+    return render(request, "search.html", {"search_text": search_text})
+
 def movie_list(request):
     movies = Movie.objects.all()
     movie_list = []

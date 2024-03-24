@@ -1,11 +1,15 @@
-# populate_database.py
+from datetime import datetime
 import json
 import os
 from django.contrib.auth.models import User
-from reviews.models import Actor, Movie, MovieCasts, Review  
+from reviews.models import Actor, Movie, MovieCast, Review  
+
+""" Aby uruchomić program należy znaleźć się w lokalizacji, gdzie znajduję się plik manage.py, 
+    a następnie wpisać: 
+    python manage.py runscript db_add """
+
 
 def run():
-
     # Uzyskaj ścieżkę do katalogu, w którym znajduje się skrypt
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -13,7 +17,7 @@ def run():
     sourced_data_dir = os.path.join(script_dir, 'sourced_data')
 
     # Uzyskaj pełną ścieżkę do pliku movie_db.json
-    file_path = os.path.join(sourced_data_dir, 'movie_db2.json')
+    file_path = os.path.join(sourced_data_dir, 'movie_db.json')
 
     # Wczytaj dane z pliku movie_db.json
     with open(file_path, 'r') as movie_file:
@@ -23,7 +27,7 @@ def run():
     for movie_data in data.get("movies", []):
         movie = Movie.objects.create(
             movie_name=movie_data.get("movie_names"),
-            publication_dates=movie_data.get("publication_dates"),
+            publication_dates=datetime.strptime(movie_data.get("publication_dates"), '%d.%m.%Y') if movie_data.get("publication_dates") else None,
             duration=movie_data.get("duration_field"),
             film_genre=movie_data.get("film_genre"),
             director=movie_data.get("directors")
@@ -48,7 +52,7 @@ def run():
             try:
                 actor = Actor.objects.get(id=actor_id)
                 movie = Movie.objects.get(id=movie_id)
-                MovieCasts.objects.create(movie=movie, actor=actor, role=role)
+                MovieCast.objects.create(movie=movie, actor=actor, role=role)
             except Actor.DoesNotExist:
                 print(f"Aktor o ID {actor_id} nie istnieje.")
 

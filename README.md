@@ -6,8 +6,10 @@
 
 
 Welcome to Critiflix, the ultimate destination for browsing, adding, and reviewing Netflix movies and TV shows. With Critiflix, you can explore a vast collection of films and series available on Netflix, while also contributing your own reviews. Customize the movie covers and share your insights with the community. Our user-friendly platform offers a seamless experience, complete with user login functionality, allowing you to create a personalized profile. Additionally, we provide a robust RESTful API, enabling developers to integrate Critiflix data into their applications. Join Critiflix today and immerse yourself in the world of Netflix entertainment!
+![image](https://github.com/Pawelpaprzycki/critiflix/assets/121885732/30036948-fd66-4f6a-b98c-9e8e9e047d7e)
 
 🔗 [Kanban board](https://github.com/users/Pawelpaprzycki/projects/2)
+
 
 ## 🚀 How to run
 

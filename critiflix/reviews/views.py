@@ -1,23 +1,42 @@
+from django.shortcuts import render
+from .models import Movie, Actor
+from .forms import SearchForm
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from .models import Movie, Review
 from .utils import average_rating
-
 
 
 def index(request):
     return render(request, "base.html")
 
-
 def movie_search(request):
     search_text = request.GET.get("search", "")
-    return render(request, "search.html", {"search_text": search_text})
+    form = SearchForm(request.GET)
+    movies = set()
+
+    if form.is_valid() and form.cleaned_data["search"]:
+        search = form.cleaned_data["search"]
+        search_in = form.cleaned_data.get("search_in") or "movie_name"
+
+        if search_in == "movie_name":
+            movies = Movie.objects.filter(movie_name__icontains=search)
+        else:
+            # Szukanie filmów na podstawie aktora
+            actor_movies = Movie.objects.filter(
+                Q(moviecast__actor__first_names__icontains=search) |
+                Q(moviecast__actor__last_names__icontains=search)
+            ).distinct()
+
+            movies = actor_movies.prefetch_related('moviecast_set__actor')
+
+    return render(request, "search_results.html", {"form": form, "search_text": search_text, "movies": movies})
 
 def movie_list(request):
     movies = Movie.objects.all()
     movie_list = []
 
     for movie in movies:
-        reviews = Review.objects.filter(movie=movie)
+        reviews = movie.reviews.all()
 
         if reviews:
             movie_rating = average_rating([review.rating for review in reviews])
@@ -31,16 +50,13 @@ def movie_list(request):
     context = {'movie_list': movie_list}
     return render(request, 'movie_list.html', context)
 
-
 def movie_detail(request, pk):
-    movie=get_object_or_404(Movie, pk=pk)
-    reviews=movie.reviews.all()
-    
+    movie = get_object_or_404(Movie, pk=pk)
+    reviews = movie.reviews.all()
+
     if reviews:
         movie_rating = average_rating([review.rating for review in reviews])
-        
         context = {'movie': movie, 'movie_rating': movie_rating, 'reviews': reviews}
-
     else:
         context = {'movie': movie, 'movie_rating': None, 'reviews': None}
 
@@ -48,4 +64,3 @@ def movie_detail(request, pk):
 
 def base(request):
     return render(request, 'base.html')
-

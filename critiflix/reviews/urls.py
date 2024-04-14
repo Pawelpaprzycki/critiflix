@@ -8,6 +8,8 @@ urlpatterns = [
 
    path('movies/<int:pk>', views.movie_detail, name = 'movie_detail'),
 
-   path('', views.base, name = 'base')
+   path('', views.base, name = 'base'),
+
+   path('movie_search/', views.movie_search, name='movie_search')
    ]
 

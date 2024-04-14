@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}
+    {% if form.is_valid and search_text %}
+        Search Results for "{{ search_text }}"
+    {% else %}
+        Movie Search
+    {% endif %}
+{% endblock %}
+{% block content %}
+<style>
+.light_text {
+    font-family: "Noto Sans", sans-serif;
+    color: white;
+}
+</style>
+<h3 class="light_text">Wyniki wyszukiwania dla "<em>{{ search_text }}</em>"</h3>
+<form class="light_text">
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<div style="margin-top: 40px;"></div>
+
+<ul>
+{% if form.is_valid and search_text %}
+<ul class="list-group">
+    {% for movie in movies %}
+    <li class="list-group-item">
+        <span class="text-info">Tytuł: </span> <a href="{% url 'movie_detail' movie.pk %}">{{ movie }}</a>
+        <br/>
+        <span class="text-info">Aktorzy: </span>
+        {% for actor in movie.moviecast_set.all %}
+        {{ actor.actor.first_names }} {{ actor.actor.last_names }}{% if not forloop.last %}, {% endif %}
+        {% empty %}
+        Brak aktorów
+        {% endfor %}
+    </li>
+    {% empty %}
+        <li class="list-group-item">Nie znaleziono wyników.</li>
+    {% endfor %}
+</ul>
+</ul>
+{% endif %}
+{% endblock %}
